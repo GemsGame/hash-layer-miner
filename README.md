@@ -1,3 +1,6 @@
+<img src="banner-3.png" alt="Hash Layer Banner" />
+
+---
 # ⛏ Hash Layer Miner
 
 This is a Node.js CPU miner for Hash Layer — a permissionless Proof-of-Work layer built on top of Sui. It allows anyone to contribute raw computation to a decentralized chain of blocks, each linked by SHA-256 and validated through transparent difficulty rules. The miner connects to the Sui network, reads the current chain state, constructs candidate blocks, and searches for a valid nonce that satisfies the current difficulty target. Once a valid block is found, it submits the result to the network.
@@ -5,12 +8,12 @@ This is a Node.js CPU miner for Hash Layer — a permissionless Proof-of-Work la
 ---
 
 
-<img src="banner-3.png" alt="Hash Layer Banner" />
+
 
 ## 📦 Requirements
 
 - [<img src="https://nodejs.org/static/images/favicons/favicon.png" alt="Node.js Logo" width="14"/> Node.js](https://nodejs.org/) (LTS version recommended)
-- [<img src="https://cdn.prod.website-files.com/6425f546844727ce5fb9e5ab/643773c0d96a22a83c5baf48_Sui_Favicon.png" alt="Node.js Logo" width="14"/> Node.js](https://sui.io/get-started) A Sui wallet (private key or mnemonic) and 0.5 SUI
+- [<img src="https://cdn.prod.website-files.com/6425f546844727ce5fb9e5ab/643773c0d96a22a83c5baf48_Sui_Favicon.png" alt="sui Logo" width="14"/> A Sui wallet](https://sui.io/get-started) (private key or mnemonic) and 0.5 SUI
 - 1 CPU core, 512mb RAM
 ---
 
