@@ -6,6 +6,7 @@ import SuiClient from "./SuiClient.js";
 import Miner from "./Miner.js";
 import Chain from "./Chain.js";
 import Adapter from "./Adapter.js";
+import BSC from "./BSC.js";
 
 // Главная точка входа: инициализация майнера, генерация артефакта, сохранение в NFTstore
 
@@ -23,9 +24,11 @@ class Hash {
   client: SuiClient;
   chain: Chain;
   adapter: Adapter;
+  bsc: BSC;
 
   constructor() {
-    this.miner = new Miner();
+    this.bsc = new BSC();
+    this.miner = new Miner(this.bsc);
     this.builder = new NFTbuilder();
     this.store = new NFTstore();
     this.client = new SuiClient("devnet");
@@ -36,11 +39,19 @@ class Hash {
   async run() {
     try {
       const result = await this.chain.snapshot();
-      console.log(result);
-    } catch (err) {}
+
+      const bytes = this.bsc.getHashBytes(
+        Number(result?.fields.last_block.fields.height),
+        result?.fields.last_block.fields.previous_hash || new Uint8Array([]),
+        Number(result?.fields.last_block.fields.nonce) || 0,
+        result?.fields.last_block.fields.data || new Uint8Array([])
+      );
+      console.log(bytes)
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
 
 const hash = new Hash();
 hash.run();
-

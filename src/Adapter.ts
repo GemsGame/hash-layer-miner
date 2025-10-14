@@ -17,10 +17,10 @@ export interface ChainObject {
 }
 
 interface ChainFields {
-  data: number[];
+  data: Uint8Array;
   height: string;
   nonce: string;
-  previous_hash: any[];
+  previous_hash: Uint8Array;
 }
 
 export default class Adapter {

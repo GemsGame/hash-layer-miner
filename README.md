@@ -4,15 +4,22 @@ This is a Node.js CPU miner for Hash Layer — a permissionless Proof-of-Work la
 
 ---
 
+
+<img src="banner-3.png" alt="Hash Layer Banner" />
+
 ## 📦 Requirements
 
-- [Node.js](https://nodejs.org/) (LTS version recommended)
-- A Sui wallet (private key or mnemonic)
+- [<img src="https://nodejs.org/static/images/favicons/favicon.png" alt="Node.js Logo" width="14"/> Node.js](https://nodejs.org/) (LTS version recommended)
+- [<img src="https://cdn.prod.website-files.com/6425f546844727ce5fb9e5ab/643773c0d96a22a83c5baf48_Sui_Favicon.png" alt="Node.js Logo" width="14"/> Node.js](https://sui.io/get-started) A Sui wallet (private key or mnemonic) and 0.5 SUI
+- 1 CPU core, 512mb RAM
 ---
 
 ## 🚀 Getting Started
 
-### 1. Download the miner
+### 1. Install node.js
+ [<img src="https://nodejs.org/static/images/favicons/favicon.png" alt="Node.js Logo" width="14"/> Node.js official website](https://nodejs.org/en/download)
+
+### 2. Download the miner
 
 If you're using Git:
 
@@ -22,16 +29,16 @@ cd hash-layer-miner
 ```
 Or just download the ZIP and unzip it.
 
-### 2. Install dependencies
+### 3. Install dependencies
 ```bash
 npm install
 ```
-### 3. Edit a .env file
+### 4. Edit a .env file
 ```bash
 WALLET_KEY=your-private-key-or-mnemonic
 ```
 
-### 4. Start mining
+### 5. Start mining
 ```bash
 npm run start
 ```
@@ -39,9 +46,8 @@ npm run start
 ---
 
 ## 🔗 Useful Links
-
-- 🌐 [Sui Documentation](https://docs.sui.io/)
+- 🌐 [Hash Layer Twitter](https://x.com/hashLayer2)
+- 💬 [Hash Layer Telegram](https://t.me/hash_layer)
 - 📦 [Hash Layer Miner Repository](https://github.com/GemsGame/hash-layer-miner)
 - 🧠 [Hash Layer Protocol Overview](https://github.com/GemsGame/hash-layer)
-- 💬 [Join the Hash Layer](https://t.me/hash_layer)
-- 📊 [Sui Explorer](https://explorer.sui.io/)
+
