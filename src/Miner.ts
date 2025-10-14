@@ -28,17 +28,18 @@ class Miner {
   }
 
   start(
-    height: number, //последний height
+    height: bigint, //последний height
     previous_hash: Uint8Array, //хеш предыдущего блока
     data: Uint8Array, //текущие данные
     difficulty: number //сложность
-  ): { nonce: number; hash: string } {
-    let nonce = 0;
+  ): { nonce: bigint; hash: string } {
+    
+    let nonce = 0n;
 
     while (true) {
       
       const hashBytes = this.bsc.getHashBytes(
-        height + 1,
+        height + 1n,
         previous_hash,
         nonce,
         data

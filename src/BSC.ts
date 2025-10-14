@@ -10,9 +10,9 @@ export default class BSC {
 
   */
   getHashBytes(
-    height: number,
+    height: bigint,
     previous_hash: Uint8Array,
-    nonce: number,
+    nonce: bigint,
     data: Uint8Array
   ) {
     const Block = bcs.struct("Block", {
@@ -21,7 +21,7 @@ export default class BSC {
       nonce: bcs.u64(),
       data: bcs.option(bcs.vector(bcs.u8())),
     });
-    const input = { height, previous_hash, nonce, data };
+    const input = { height: height.toString(), previous_hash, nonce: nonce.toString(), data };
     const bytes = Block.serialize(input).toBytes();
     return crypto.createHash("sha256").update(bytes).digest();
   }

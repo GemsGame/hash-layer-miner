@@ -1,4 +1,4 @@
-<img src="banner-3.png" alt="Hash Layer Banner" />
+<img src="assets/hash-layer.png" alt="Hash Layer Banner" />
 
 # ⛏ Hash Layer Miner
 
@@ -12,8 +12,9 @@ This is a Node.js CPU miner for Hash Layer — a permissionless Proof-of-Work la
 ## 📦 Requirements
 
 - [<img src="https://nodejs.org/static/images/favicons/favicon.png" alt="Node.js Logo" width="14"/> Node.js](https://nodejs.org/) (LTS version recommended)
-- [<img src="https://cdn.prod.website-files.com/6425f546844727ce5fb9e5ab/643773c0d96a22a83c5baf48_Sui_Favicon.png" alt="sui Logo" width="14"/> A Sui wallet](https://sui.io/get-started) (private key or mnemonic) and 0.5 SUI
-- 1 CPU core, 512mb RAM
+- [<img src="https://cdn.prod.website-files.com/6425f546844727ce5fb9e5ab/643773c0d96a22a83c5baf48_Sui_Favicon.png" alt="sui Logo" width="14"> A Sui wallet](https://sui.io/get-started) (private key or mnemonic) and 0.5 SUI
+- <img src="https://cdn-icons-png.flaticon.com/512/8186/8186331.png" alt="CPU" width="14"/> 1 CPU core, 512mb RAM
+
 ---
 
 ## 🚀 Getting Started
@@ -48,8 +49,8 @@ npm run start
 ---
 
 ## 🔗 Useful Links
-- 🌐 [Hash Layer Twitter](https://x.com/hashLayer2)
 - 💬 [Hash Layer Telegram](https://t.me/hash_layer)
+- 🌐 [Hash Layer Twitter](https://x.com/hashLayer2)
+- 🧠 [Hash Layer Protocol Overview](https://github.com/GemsGame/hash-layer-miner/assets/hash-layer.pdf)
 - 📦 [Hash Layer Miner Repository](https://github.com/GemsGame/hash-layer-miner)
-- 🧠 [Hash Layer Protocol Overview](https://github.com/GemsGame/hash-layer)
 

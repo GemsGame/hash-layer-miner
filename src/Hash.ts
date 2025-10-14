@@ -28,27 +28,50 @@ class Hash {
 
   constructor() {
     this.bsc = new BSC();
-    this.miner = new Miner(this.bsc);
     this.builder = new NFTbuilder();
     this.store = new NFTstore();
     this.client = new SuiClient("devnet");
     this.adapter = new Adapter();
     this.chain = new Chain(this.client, this.adapter);
+    this.miner = new Miner(this.bsc);
   }
 
   async run() {
-    try {
-      const result = await this.chain.snapshot();
 
-      const bytes = this.bsc.getHashBytes(
-        Number(result?.fields.last_block.fields.height),
-        result?.fields.last_block.fields.previous_hash || new Uint8Array([]),
-        Number(result?.fields.last_block.fields.nonce) || 0,
-        result?.fields.last_block.fields.data || new Uint8Array([])
-      );
-      console.log(bytes)
-    } catch (err) {
-      console.log(err);
+    while(true) {
+      try {
+        const snapshot = await this.chain.snapshot();
+        const {
+          height = 0,
+          previous_hash = new Uint8Array([]),
+          nonce = 0,
+          data = new Uint8Array([]),
+        } = snapshot?.fields.last_block.fields ?? {};
+
+        const {
+          difficulty
+        } = snapshot?.fields ?? {};
+
+        const blockBytes = this.bsc.getHashBytes(
+          BigInt(height),
+          previous_hash,
+          BigInt(nonce),
+          data
+        );
+
+        const {nonce: _nonce, hash } = this.miner.start(BigInt(height), blockBytes, new Uint8Array([]), Number(difficulty));
+        const _snapshot = await this.chain.snapshot();
+        
+        if(snapshot?.fields.last_block.fields?.height === _snapshot?.fields.last_block.fields?.height) {
+            console.log(_nonce.toString(), hash);
+            
+        } else {
+            console.log('...block is expired');
+        }
+
+      } catch (err) {
+        console.log(err);
+      }
     }
   }
 }
