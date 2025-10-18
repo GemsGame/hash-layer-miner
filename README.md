@@ -2,7 +2,7 @@
 
 # ⛏ Hash Layer Miner
 
-This is a Node.js CPU miner for Hash Layer — a permissionless Proof-of-Work layer built on top of Sui. It allows anyone to contribute raw computation to a decentralized chain of blocks, each linked by SHA-256 and validated through transparent difficulty rules. The miner connects to the Sui network, reads the current chain state, constructs candidate blocks, and searches for a valid nonce that satisfies the current difficulty target. Once a valid block is found, it submits the result to the network.
+This is a Node.js CPU miner for Hash Layer — a permissionless Proof-of-Work layer built on top of Sui. It allows anyone to contribute raw computation to a decentralized chain of blocks, each linked by hash and validated through transparent difficulty rules. The miner connects to the Sui network, reads the current chain state, constructs candidate blocks, and searches for a valid nonce that satisfies the current difficulty target. Once a valid block is found, it submits the result to the network.
 
 <img src="assets/Снимок экрана 2025-10-18 170003.png" alt="Hash Layer Banner" />
 

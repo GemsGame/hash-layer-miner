@@ -52,14 +52,25 @@ class Hash {
           Number(difficulty)
         );
 
-        const result = await this.tx.sumbitBlock(
-          nonce,
-          [],
-          new TextEncoder().encode(process.env.NFT_URL),
-          process.env.CHAIN_OBJECT
-        );
+        const _snapshot = await this.chain.snapshot();
+        if (!_snapshot) return;
 
-        console.log(result)
+        if (
+          snapshot.fields.last_block.fields.header.fields.height ===
+          _snapshot.fields.last_block.fields.header.fields.height
+        ) {
+          const result = await this.tx.sumbitBlock(
+            nonce,
+            [],
+            new TextEncoder().encode(process.env.NFT_URL),
+            process.env.CHAIN_OBJECT
+          );
+
+          console.log(result);
+
+        } else {
+          continue;
+        }
 
       } catch (err) {
         console.log(err);
