@@ -18,7 +18,6 @@ class Miner {
   countLeadingZeroBits(hash: Uint8Array): number {
     let count = 0;
     for (let i = 0; i < hash.length; i++) {
-
       const byte = hash[i]!;
       const zeros = this.leadingZeros(byte);
       count += zeros;
@@ -28,16 +27,16 @@ class Miner {
   }
 
   start(
-    height: bigint, //последний height
-    previous_hash: Uint8Array, //хеш предыдущего блока
-    data: Uint8Array, //текущие данные
-    difficulty: number //сложность
+    height: bigint,
+    previous_hash: Uint8Array,
+    data: Uint8Array,
+    difficulty: number
   ): { nonce: bigint; hash: string } {
-    
     let nonce = 0n;
+    let counter = 0n;
+    let start = Date.now();
 
     while (true) {
-      
       const hashBytes = this.bsc.getHashBytes(
         height + 1n,
         previous_hash,
@@ -45,13 +44,21 @@ class Miner {
         data
       );
 
-      const leadingZeros = this.countLeadingZeroBits(hashBytes);
+      if (this.countLeadingZeroBits(hashBytes) >= difficulty) {
+        const hex = Buffer.from(hashBytes).toString("hex");
 
-      if (leadingZeros >= difficulty) {
-        return { nonce, hash: Buffer.from(hashBytes).toString("hex") };
+        console.log("༼ つ ◕_◕ ༽つ" + hex, nonce);
+        return { nonce, hash: hex };
       }
 
       nonce++;
+      counter++;
+
+      if (counter % 100000n === 0n) {
+        const elapsed = (Date.now() - start) / 1000; // секунды, number
+        const hashrate = Number(counter) / elapsed;  // hashes per second
+        console.log(`Tried ${counter} nonces, ~${hashrate.toFixed(2)} H/s`);
+      }
     }
   }
 }

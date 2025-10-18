@@ -1,5 +1,7 @@
 import { getFullnodeUrl, SuiClient as Client } from '@mysten/sui/client';
 import { SuiNetworkType } from './Hash.js';
+import { Transaction } from '@mysten/sui/transactions';
+import { Signer } from '@mysten/sui/cryptography';
 
 export class SuiClient {
     client: Client;
@@ -35,18 +37,13 @@ export class SuiClient {
     }
 
     // Выполнить транзакцию
-    async executeTransaction(transactionBlock: string | Uint8Array<ArrayBufferLike>, signature: string) {
-        return await this.client.executeTransactionBlock({
-            transactionBlock,
-            signature,
+    async executeTransaction(transaction: Transaction, signer: Signer) {
+        return await this.client.signAndExecuteTransaction({
+            transaction,
+            signer,
             options: {
-                showEffects: true,
-                showEvents: true,
-                showBalanceChanges: true,
-                showInput: true,
-                showObjectChanges: true,
-                showRawInput: true,
-                showRawEffects: true
+               showEffects: true,
+               showEvents: true
             }
         });
     }

@@ -9,19 +9,29 @@ export interface ChainObject {
     last_adjustment_time: string;
     last_block: {
       type: string;
-      fields: ChainFields;
+      fields: Block;
     };
     reward: string;
   };
   type: string;
 }
 
-interface ChainFields {
-  data: Uint8Array;
-  height: string;
-  nonce: string;
-  previous_hash: Uint8Array;
+
+interface Header {
+  height: bigint,
+  previous_hash: Uint8Array,
+  nonce: bigint,
+  data: Uint8Array,     
 }
+
+interface Block {
+   header: {
+     type: string,
+     fields: Header
+   },
+   block_hash: Uint8Array,
+}
+
 
 export default class Adapter {
 

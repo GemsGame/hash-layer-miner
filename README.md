@@ -4,6 +4,8 @@
 
 This is a Node.js CPU miner for Hash Layer — a permissionless Proof-of-Work layer built on top of Sui. It allows anyone to contribute raw computation to a decentralized chain of blocks, each linked by SHA-256 and validated through transparent difficulty rules. The miner connects to the Sui network, reads the current chain state, constructs candidate blocks, and searches for a valid nonce that satisfies the current difficulty target. Once a valid block is found, it submits the result to the network.
 
+<img src="assets/Снимок экрана 2025-10-18 170003.png" alt="Hash Layer Banner" />
+
 ---
 
 
@@ -51,6 +53,7 @@ npm run start
 ## 🔗 Useful Links
 - 💬 [Hash Layer Telegram](https://t.me/hash_layer)
 - 🌐 [Hash Layer Twitter](https://x.com/hashLayer2)
-- 🧠 [Hash Layer Protocol Overview](https://github.com/GemsGame/hash-layer-miner/assets/hash-layer.pdf)
+- 🧠 [Hash Layer Protocol Overview](https://github.com/GemsGame/hash-layer-miner/blob/main/assets/hash-layer.pdf)
 - 📦 [Hash Layer Miner Repository](https://github.com/GemsGame/hash-layer-miner)
+
 
