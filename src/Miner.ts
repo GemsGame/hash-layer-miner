@@ -3,27 +3,35 @@ import BSC from "./BSC.js";
 class Miner {
   constructor(private bsc: BSC) {}
 
-  leadingZeros(byte: number): number {
-    if (byte === 0) return 8;
-    else if (byte < 2) return 7;
-    else if (byte < 4) return 6;
-    else if (byte < 8) return 5;
-    else if (byte < 16) return 4;
-    else if (byte < 32) return 3;
-    else if (byte < 64) return 2;
-    else if (byte < 128) return 1;
-    else return 0;
-  }
+  hasLeadingZeroBits(hash: Uint8Array, bits: number): boolean {
+    const fullZeroBytes = Math.floor(bits / 8);
+    const partialBits = bits % 8;
 
-  countLeadingZeroBits(hash: Uint8Array): number {
-    let count = 0;
-    for (let i = 0; i < hash.length; i++) {
-      const byte = hash[i]!;
-      const zeros = this.leadingZeros(byte);
-      count += zeros;
-      if (zeros < 8) break;
+    // Вычисляем необходимую длину
+    const neededLen = fullZeroBytes + (partialBits > 0 ? 1 : 0);
+    if (hash.length < neededLen) {
+      return false;
     }
-    return count;
+
+    // Проверяем полные нулевые байты
+    for (let i = 0; i < fullZeroBytes; i++) {
+      if (hash[i] !== 0) {
+        return false;
+      }
+    }
+
+    // Проверяем частичные биты
+    if (partialBits > 0) {
+      const byte = hash[fullZeroBytes]!;
+      const shift = 8 - partialBits;
+      const mask = (0xff << shift) & 0xff; // Маска для старших partialBits битов
+
+      if ((byte & mask) !== 0) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   start(
@@ -44,7 +52,7 @@ class Miner {
         data
       );
 
-      if (this.countLeadingZeroBits(hashBytes) >= difficulty) {
+      if (this.hasLeadingZeroBits(hashBytes, difficulty)) {
         const hex = Buffer.from(hashBytes).toString("hex");
 
         console.log("༼ つ ◕_◕ ༽つ" + hex, nonce);
@@ -56,7 +64,7 @@ class Miner {
 
       if (counter % 100000n === 0n) {
         const elapsed = (Date.now() - start) / 1000; // секунды, number
-        const hashrate = Number(counter) / elapsed;  // hashes per second
+        const hashrate = Number(counter) / elapsed; // hashes per second
         console.log(`Tried ${counter} nonces, ~${hashrate.toFixed(2)} H/s`);
       }
     }

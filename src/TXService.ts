@@ -18,11 +18,24 @@ export default class TXService {
     this.contractId = contractId;
   }
 
+  private createMintTx(controller: string, keeper: string) {
+    const tx = new Transaction();
+    tx.moveCall({
+      target: `${this.contractId}::hash_layer::mint`,
+      arguments: [tx.object(controller), tx.object(keeper)],
+    });
+
+    tx.setGasPrice(1000);
+    tx.setGasBudget(3500000)
+    return tx;
+  }
+
   private createTx(
     nonce: bigint,
     data: number[],
     imageUrl: Uint8Array,
-    chainId: string
+    chainId: string,
+    keeper: string
   ) {
     const tx = new Transaction();
     tx.moveCall({
@@ -33,11 +46,11 @@ export default class TXService {
         tx.pure.vector("u8", imageUrl), // vector<u8>
         tx.object(chainId),
         tx.object.clock(),
+        tx.object(keeper),
       ],
     });
 
     tx.setGasPrice(1000);
-    tx.setGasBudget(3500000);
     return tx;
   }
 
@@ -45,13 +58,32 @@ export default class TXService {
     nonce: bigint,
     data: number[],
     imageUrl: Uint8Array,
-    chainId: string | undefined
+    chainId: string | undefined,
+    keeper: string | undefined
   ) {
     if (!imageUrl) throw new Error("imageUrl is required");
     if (!chainId) throw new Error("chainId is required");
+    if (!keeper) throw new Error("keeper is required");
 
     try {
-      const tx = this.createTx(nonce, data, imageUrl, chainId);
+      const tx = this.createTx(nonce, data, imageUrl, chainId, keeper);
+      const result = await this.client.executeTransaction(tx, this.keypar);
+
+      return result;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async mintCoins(
+    controller: string | undefined,
+    keeper: string | undefined
+  ) {
+    if (!controller) throw new Error("imageUrl is required");
+    if (!keeper) throw new Error("keeper is required");
+
+    try {
+      const tx = this.createMintTx(controller, keeper);
       const result = await this.client.executeTransaction(tx, this.keypar);
 
       return result;

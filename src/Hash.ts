@@ -1,4 +1,4 @@
-import "dotenv/config";
+import './load-env.js';
 import NFTbuilder from "./NFTbuilder.js";
 import NFTstore from "./NFTstore.js";
 import SuiClient from "./SuiClient.js";
@@ -24,7 +24,7 @@ class Hash {
     this.bsc = new BSC();
     this.builder = new NFTbuilder();
     this.store = new NFTstore();
-    this.client = new SuiClient("devnet");
+    this.client = new SuiClient(process.env.NETWORK);
     this.adapter = new Adapter();
     this.chain = new Chain(this.client, this.adapter);
     this.miner = new Miner(this.bsc);
@@ -63,15 +63,16 @@ class Hash {
             nonce,
             [],
             new TextEncoder().encode(process.env.NFT_URL),
-            process.env.CHAIN_OBJECT
+            process.env.CHAIN_OBJECT,
+            process.env.BALANCE_KEEPER
           );
 
           console.log(result);
 
+          await new Promise((resolve) => setTimeout(resolve, 1000))
         } else {
           continue;
         }
-
       } catch (err) {
         console.log(err);
       }

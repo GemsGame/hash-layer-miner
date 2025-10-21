@@ -13,8 +13,8 @@ This is a Node.js CPU miner for Hash Layer — a permissionless Proof-of-Work la
 
 ## 📦 Requirements
 
-- [<img src="https://nodejs.org/static/images/favicons/favicon.png" alt="Node.js Logo" width="14"/> Node.js](https://nodejs.org/) (LTS version recommended)
-- [<img src="https://cdn.prod.website-files.com/6425f546844727ce5fb9e5ab/643773c0d96a22a83c5baf48_Sui_Favicon.png" alt="sui Logo" width="14"> A Sui wallet](https://sui.io/get-started) (private key or mnemonic) and 0.5 SUI
+- [<img src="https://nodejs.org/static/images/favicons/favicon.png" alt="Node.js Logo" width="14"/> Node.js](https://nodejs.org/)
+- [<img src="https://cdn.prod.website-files.com/6425f546844727ce5fb9e5ab/643773c0d96a22a83c5baf48_Sui_Favicon.png" alt="sui Logo" width="14"> A Sui wallet](https://sui.io/get-started) (mnemonic 12 words) and 1 SUI
 - <img src="https://cdn-icons-png.flaticon.com/512/8186/8186331.png" alt="CPU" width="14"/> 1 CPU core, 512mb RAM
 
 ---
@@ -38,22 +38,26 @@ Or just download the ZIP and unzip it.
 ```bash
 npm install
 ```
-### 4. Edit a .env file
+### 4. Create a .env.secrets file near .env and add text
 ```bash
-WALLET_KEY=your-private-key-or-mnemonic
+MNEMONIC="word word word word word word word word word word" # Your wallet (12 words)
 ```
 
 ### 5. Start mining
 ```bash
 npm run start
 ```
-
+### 6. Mint coins
+After mining you can mint your reward by that command.
+```bash
+npm run mint
+```
 ---
 
 ## 🔗 Useful Links
 - 💬 [Hash Layer Telegram](https://t.me/hash_layer)
 - 🌐 [Hash Layer Twitter](https://x.com/hashLayer2)
-- 🧠 [Hash Layer Protocol Overview](https://github.com/GemsGame/hash-layer-miner/blob/main/assets/hash-layer.pdf)
+- 🧠 [Hash Layer Whitepaper](https://bafkreihstayvzbnbzoewopnmwsvqck2w3h2adrcuoc46pob4visefsy6k4.ipfs.w3s.link)
 - 📦 [Hash Layer Miner Repository](https://github.com/GemsGame/hash-layer-miner)
 
 

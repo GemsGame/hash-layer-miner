@@ -6,8 +6,10 @@ import { Signer } from '@mysten/sui/cryptography';
 export class SuiClient {
     client: Client;
     
-    constructor(network: SuiNetworkType) {
-        this.client = new Client({ url: getFullnodeUrl(network) });
+    constructor(network: string | undefined) {
+
+        if(!network) throw new Error("network is req");
+        this.client = new Client({ url: getFullnodeUrl(network as SuiNetworkType) });
     }
 
     // Получить информацию об объекте

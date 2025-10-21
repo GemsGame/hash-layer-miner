@@ -1,14 +1,16 @@
 {
   "name": "hash-layer-miner",
   "version": "1.0.0",
-  "description": "Official Hash Layer miner",
+  "description": "Official Hash Layer miner.",
   "main": "index.js",
   "type": "module",
+  
   "scripts": {
-    "start": "npx tsc && node dist/Hash.js"
+    "start": "npx tsc && node dist/Hash.js",
+    "mint": "npx tsc && node dist/Mint.js"
   },
-  "author": "",
-  "license": "MIT",
+  "author": "Anton Masanavets",
+  "license": "CC BY-NC 4.0",
   "devDependencies": {
     "@types/blake2": "^4.0.4",
     "@types/node": "^24.7.2",
