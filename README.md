@@ -38,9 +38,9 @@ Or just download the ZIP and unzip it.
 ```bash
 npm install
 ```
-### 4. Create a .env.secrets file near .env and add text
+### 4. Create a .env.secrets file near the .env file with text
 ```bash
-MNEMONIC="word word word word word word word word word word" # Your wallet (12 words)
+MNEMONIC="word word word word word word word word word word" # Write your seed-phrase here (12 words)
 ```
 
 ### 5. Start mining
@@ -61,3 +61,33 @@ npm run mint
 - 📦 [Hash Layer Miner Repository](https://github.com/GemsGame/hash-layer-miner)
 
 
+## 🌐 Hash Layer Network Features
+
+- **Permissionless Mining**  
+  Anyone can participate in mining without registration, permissions, or centralized coordination.
+
+- **On-Chain Events Instead of Objects**  
+  Each block is emitted as an event, reducing gas costs and simplifying verification.
+
+- **Linear Emission Model**  
+  Smooth reward decay over time without abrupt halvings, enabling predictable token distribution.
+
+- **Dynamic Difficulty Adjustment**  
+  Difficulty recalibrates every 1440 blocks to maintain a stable mining tempo.
+
+- **Transparent Verification**  
+  The full block history is accessible via RPC, from genesis to the latest block.
+
+- **Programmable Data Layer**  
+  Each block includes a `data` field for storing messages, NFT triggers, or other on-chain payloads.
+
+- **Minimal Overhead**  
+  The architecture avoids shared objects and persistent storage, enabling scalable mining with low cost.
+
+- **Cryptographic Integrity**  
+  Every block includes a `previous_hash`, forming a verifiable chain of computational work.
+
+- **Sui Integration**  
+  Built on Sui’s object-oriented architecture for high throughput and secure execution.
+
+----

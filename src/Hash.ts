@@ -69,7 +69,6 @@ class Hash {
 
           console.log(result);
 
-          await new Promise((resolve) => setTimeout(resolve, 1000))
         } else {
           continue;
         }
