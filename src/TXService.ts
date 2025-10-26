@@ -51,6 +51,7 @@ export default class TXService {
     });
 
     tx.setGasPrice(1000);
+    tx.setGasBudget(3500000)
     return tx;
   }
 

@@ -1,4 +1,4 @@
-import './load-env.js';
+import "./load-env.js";
 import NFTbuilder from "./NFTbuilder.js";
 import NFTstore from "./NFTstore.js";
 import SuiClient from "./SuiClient.js";
@@ -7,8 +7,7 @@ import Chain from "./Chain.js";
 import Adapter from "./Adapter.js";
 import BSC from "./BSC.js";
 import TXService from "./TXService.js";
-
-export type SuiNetworkType = "mainnet" | "testnet" | "devnet";
+import { SnapshotWatcher } from "./SnapshotWatcher.js";
 
 class Hash {
   miner: Miner;
@@ -19,12 +18,13 @@ class Hash {
   adapter: Adapter;
   bsc: BSC;
   tx: TXService;
+  watcher: SnapshotWatcher;
 
   constructor() {
     this.bsc = new BSC();
     this.builder = new NFTbuilder();
     this.store = new NFTstore();
-    this.client = new SuiClient(process.env.NETWORK);
+    this.client = new SuiClient(process.env.RPC_PROVIDER);
     this.adapter = new Adapter();
     this.chain = new Chain(this.client, this.adapter);
     this.miner = new Miner(this.bsc);
@@ -33,49 +33,49 @@ class Hash {
       process.env.MNEMONIC,
       process.env.HASH_CONTRACT
     );
+
+    this.watcher = new SnapshotWatcher(this.chain);
   }
 
   async run() {
-    while (true) {
+    this.watcher.start(async (snapshot) => {
+      this.miner.stop();
+
+      const { header, block_hash } = snapshot.fields.last_block.fields;
+      const { difficulty } = snapshot.fields;
+      const { height } = header.fields;
+
+      console.log("New snapshot at height", height);
+
       try {
-        const snapshot = await this.chain.snapshot();
-        if (!snapshot) return;
-
-        const { header, block_hash } = snapshot.fields.last_block.fields;
-        const { difficulty } = snapshot.fields;
-        const { height } = header.fields;
-
-        const { nonce } = this.miner.start(
+        const result = await this.miner.start(
           BigInt(height),
           block_hash,
           new Uint8Array([]),
           Number(difficulty)
         );
 
-        const _snapshot = await this.chain.snapshot();
-        if (!_snapshot) return;
+        if (result) {
+          const { nonce, hash } = result;
+          console.log("༼ つ ◕_◕ ༽つ" + hash, nonce);
 
-        if (
-          snapshot.fields.last_block.fields.header.fields.height ===
-          _snapshot.fields.last_block.fields.header.fields.height
-        ) {
-          const result = await this.tx.sumbitBlock(
-            nonce,
-            [],
-            new TextEncoder().encode(process.env.NFT_URL),
-            process.env.CHAIN_OBJECT,
-            process.env.BALANCE_KEEPER
-          );
-
-          console.log(result);
-
-        } else {
-          continue;
+          try {
+            const tx = await this.tx.sumbitBlock(
+              nonce,
+              [],
+              new TextEncoder().encode(process.env.NFT_URL),
+              process.env.CHAIN_OBJECT,
+              process.env.BALANCE_KEEPER
+            );
+            console.log(tx);
+          } catch (err) {
+            console.error(err);
+          }
         }
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
-    }
+    });
   }
 }
 

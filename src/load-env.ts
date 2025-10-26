@@ -19,8 +19,6 @@ if (fs.existsSync(secretsPath)) {
 // Экспорт переменных
 export const config = {
   mnemonic: process.env.MNEMONIC,
-  network: process.env.NETWORK,
-  rpc: process.env.RPC_URL,
 } as const;
 
 if (!config.mnemonic) {
