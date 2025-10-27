@@ -7,7 +7,7 @@ export default class Chain {
   constructor(private suiClient: SuiClient, private adapter: Adapter) {}
 
   async snapshot() {
-    if (!process.env.CHAIN_OBJECT || !process.env.CHAIN_OBJECT_TYPE) return;
+    if (!process.env.CHAIN_OBJECT || !process.env.CHAIN_OBJECT_TYPE) return null;
 
     try {
       const response = await this.suiClient.getObject(process.env.CHAIN_OBJECT);

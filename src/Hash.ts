@@ -18,7 +18,6 @@ class Hash {
   bsc: BSC;
   tx: TXService;
 
-
   constructor() {
     this.bsc = new BSC();
     this.builder = new NFTbuilder();
@@ -26,7 +25,7 @@ class Hash {
     this.client = new SuiClient(process.env.RPC_PROVIDER);
     this.adapter = new Adapter();
     this.chain = new Chain(this.client, this.adapter);
-    this.miner = new Miner(this.bsc);
+    this.miner = new Miner(this.bsc, this.chain);
     this.tx = new TXService(
       this.client,
       process.env.MNEMONIC,
@@ -35,66 +34,41 @@ class Hash {
   }
 
   async run() {
-
-    let lastHeight: bigint | null = null;
     while (true) {
       try {
-        const snapshot = await this.chain.snapshot();
+        const result = await this.miner.start();
 
-        if(!snapshot) throw new Error("snapshot")
-
-        const { header, block_hash } = snapshot.fields.last_block.fields;
-        const { difficulty } = snapshot.fields;
-        const height = BigInt(header.fields.height);
-
-
-         // проверка: обновился ли блок
-        if (lastHeight !== null && height === lastHeight) {
-          // блок не изменился
-          await new Promise(r => setTimeout(r, 1500));
-          continue;
-        }
-
-        lastHeight = height;
-        
-        this.miner.stop();
-        console.log("New snapshot at height", height.toString());
-  
-        const result = await this.miner.start(
-          height,
-          block_hash,
-          new Uint8Array([]),
-          Number(difficulty)
-        );
-
-        if (!result) {continue;}
-
-        const { nonce, hash } = result;
-        console.log("༼ つ ◕_◕ ༽つ", hash, nonce.toString());
-
-        try {
-          const tx = await this.tx.sumbitBlock(
-            nonce,
-            [],
-            new TextEncoder().encode(process.env.NFT_URL),
-            process.env.CHAIN_OBJECT,
-            process.env.BALANCE_KEEPER
-          );
+        if (result) {
+          console.log("༼ つ ◕_◕ ༽つ" + result?.hash, result?.nonce);
+          const tx = await this.handleMiningResult(result);
           console.log("Block submitted:", tx);
-        } catch (err: any) {
-          if (err?.code === -32002) {
-            console.warn(
-              "Rejected by validators (object conflict). Wait for next snapshot."
-            );
-          } else {
-            console.error("Submit block failed:", err?.message || err);
-          }
         }
       } catch (err: any) {
         console.error("Snapshot error:", err?.message || err);
       }
+    }
+  }
 
-      await new Promise(r => setTimeout(r, 1500));
+  private async handleMiningResult(result: any) {
+    const { nonce } = result;
+
+    try {
+      const tx = await this.tx.sumbitBlock(
+        nonce,
+        [],
+        new TextEncoder().encode(process.env.NFT_URL || ""),
+        process.env.CHAIN_OBJECT || "",
+        process.env.BALANCE_KEEPER || ""
+      );
+      return tx;
+    } catch (err: any) {
+      if (err?.code === -32002) {
+        console.warn(
+          "Rejected by validators (object conflict). Wait for next snapshot."
+        );
+      } else {
+        console.error("Submit block failed:", err?.message || err);
+      }
     }
   }
 }

@@ -1,14 +1,12 @@
+import { ChainObject } from "./Adapter.js";
 import BSC from "./BSC.js";
+import Chain from "./Chain.js";
 
 class Miner {
-  private running = false;
-  private generation = 0;
+  snapshot: ChainObject | null;
 
-  constructor(private bsc: BSC) {}
-
-  stop() {
-    this.running = false;
-    this.generation++;
+  constructor(private bsc: BSC, private chain: Chain) {
+    this.snapshot = null;
   }
 
   hasLeadingZeroBits(hash: Uint8Array, bits: number): boolean {
@@ -42,53 +40,62 @@ class Miner {
     return true;
   }
 
-  async start(
-    height: bigint,
-    previous_hash: Uint8Array,
-    data: Uint8Array,
-    difficulty: number,
-    chunkSize = 10_000
-  ) {
-    this.running = true;
-    const myGen = this.generation;
-
-    let nonce = BigInt(Math.floor(Math.random() * 1e12));
-    let counter = 0n;
-    let hashes = 0n;
-    let start = Date.now();
-
-    while (this.running && myGen === this.generation) {
-      const hashBytes = this.bsc.getHashBytes(
-        height + 1n,
-        previous_hash,
-        nonce,
-        data
-      );
-
-      if (this.hasLeadingZeroBits(hashBytes, difficulty)) {
-        this.running = false;
-        return { nonce, hash: Buffer.from(hashBytes).toString("hex") };
+  async start() {
+    try {
+      if (this.snapshot === null) {
+        this.snapshot = await this.chain.snapshot();
+        if (!this.snapshot) throw new Error("snapshot");
       }
 
-      nonce++;
-      counter++;
-      hashes++;
+      const { header, block_hash } = this.snapshot.fields.last_block.fields;
+      const { difficulty } = this.snapshot.fields;
+      const height = BigInt(header.fields.height);
 
-      if (counter >= chunkSize) {
-        counter = 0n;
-        await new Promise((r) => setImmediate(r));
+      let nonce = BigInt(Math.floor(Math.random() * 1e12));
+      let iteration = 0n;
+      let start = Date.now();
+
+      while (true) {
+        const hashBytes = this.bsc.getHashBytes(
+          height + 1n,
+          block_hash,
+          nonce,
+          new Uint8Array([])
+        );
+
+        if (this.hasLeadingZeroBits(hashBytes, Number(difficulty))) {
+          return { nonce, hash: Buffer.from(hashBytes).toString("hex") };
+        }
+
+        nonce++;
+        iteration++;
+
+        if (iteration % 100000n === 0n) {
+          const _snapshot = await this.chain.snapshot();
+          if (!_snapshot) throw new Error("snapshot");
+          const { header } = _snapshot.fields.last_block.fields;
+          const _height = BigInt(header.fields.height);
+
+          const elapsed = (Date.now() - start) / 1000;
+          const hashrate = Number(iteration) / elapsed;
+          console.log(`Tried ${iteration} nonces, ~${hashrate.toFixed(2)} H/s`);
+
+          if (height !== _height) {
+
+            console.log(
+              "New block at height " +
+                _height
+            );
+
+            this.snapshot = _snapshot;
+
+            return null;
+          }
+        }
       }
-
-      if(hashes % 100000n === 0n) {
-
-        const elapsed = (Date.now() - start) / 1000; 
-        const hashrate = Number(hashes) / elapsed;
-        console.log(`Tried ${hashes} nonces, ~${hashrate.toFixed(2)} H/s`);
-      }
-     
+    } catch (err) {
+      throw err;
     }
-
-    return null;
   }
 }
 
