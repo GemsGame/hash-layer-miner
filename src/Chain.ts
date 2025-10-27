@@ -11,6 +11,8 @@ export default class Chain {
 
     try {
       const response = await this.suiClient.getObject(process.env.CHAIN_OBJECT);
+      if (!response) throw new Error("no have obj");
+
       return this.adapter.decode<ChainObject>(
         response,
         process.env.CHAIN_OBJECT_TYPE

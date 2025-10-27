@@ -3,6 +3,7 @@ import BSC from "./BSC.js";
 class Miner {
   private running = false;
   private generation = 0;
+
   constructor(private bsc: BSC) {}
 
   stop() {
@@ -45,35 +46,46 @@ class Miner {
     height: bigint,
     previous_hash: Uint8Array,
     data: Uint8Array,
-    difficulty: number
+    difficulty: number,
+    chunkSize = 10_000
   ) {
     this.running = true;
     const myGen = this.generation;
-    let nonce = BigInt(Math.floor(Math.random() * 1e8));
-    let chunkSize = 10_000;
-    let start = Date.now();
+
+    let nonce = BigInt(Math.floor(Math.random() * 1e12));
     let counter = 0n;
+    let hashes = 0n;
+    let start = Date.now();
 
     while (this.running && myGen === this.generation) {
-      for (let i = 0; i < chunkSize && this.running; i++) {
+      const hashBytes = this.bsc.getHashBytes(
+        height + 1n,
+        previous_hash,
+        nonce,
+        data
+      );
 
-        const hashBytes = this.bsc.getHashBytes(height + 1n, previous_hash, nonce, data);
-        if (this.hasLeadingZeroBits(hashBytes, difficulty)) {
-          this.running = false;
-          return { nonce, hash: Buffer.from(hashBytes).toString("hex") };
-        }
-        nonce++;
-        counter++;
+      if (this.hasLeadingZeroBits(hashBytes, difficulty)) {
+        this.running = false;
+        return { nonce, hash: Buffer.from(hashBytes).toString("hex") };
       }
 
-      await new Promise(r => setImmediate(r));
+      nonce++;
+      counter++;
+      hashes++;
 
-       if (counter % 100000n === 0n) {
+      if (counter >= chunkSize) {
+        counter = 0n;
+        await new Promise((r) => setImmediate(r));
+      }
+
+      if(hashes % 100000n === 0n) {
+
         const elapsed = (Date.now() - start) / 1000; 
-        const hashrate = Number(counter) / elapsed;
-        console.log(`Tried ${counter} nonces, ~${hashrate.toFixed(2)} H/s`);
+        const hashrate = Number(hashes) / elapsed;
+        console.log(`Tried ${hashes} nonces, ~${hashrate.toFixed(2)} H/s`);
       }
-
+     
     }
 
     return null;

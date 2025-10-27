@@ -7,7 +7,6 @@ import Chain from "./Chain.js";
 import Adapter from "./Adapter.js";
 import BSC from "./BSC.js";
 import TXService from "./TXService.js";
-import { SnapshotWatcher } from "./SnapshotWatcher.js";
 
 class Hash {
   miner: Miner;
@@ -18,7 +17,7 @@ class Hash {
   adapter: Adapter;
   bsc: BSC;
   tx: TXService;
-  watcher: SnapshotWatcher;
+
 
   constructor() {
     this.bsc = new BSC();
@@ -33,49 +32,70 @@ class Hash {
       process.env.MNEMONIC,
       process.env.HASH_CONTRACT
     );
-
-    this.watcher = new SnapshotWatcher(this.chain);
   }
 
   async run() {
-    this.watcher.start(async (snapshot) => {
-      this.miner.stop();
 
-      const { header, block_hash } = snapshot.fields.last_block.fields;
-      const { difficulty } = snapshot.fields;
-      const { height } = header.fields;
-
-      console.log("New snapshot at height", height);
-
+    let lastHeight: bigint | null = null;
+    while (true) {
       try {
+        const snapshot = await this.chain.snapshot();
+
+        if(!snapshot) throw new Error("snapshot")
+
+        const { header, block_hash } = snapshot.fields.last_block.fields;
+        const { difficulty } = snapshot.fields;
+        const height = BigInt(header.fields.height);
+
+
+         // проверка: обновился ли блок
+        if (lastHeight !== null && height === lastHeight) {
+          // блок не изменился
+          await new Promise(r => setTimeout(r, 1500));
+          continue;
+        }
+
+        lastHeight = height;
+        
+        this.miner.stop();
+        console.log("New snapshot at height", height.toString());
+  
         const result = await this.miner.start(
-          BigInt(height),
+          height,
           block_hash,
           new Uint8Array([]),
           Number(difficulty)
         );
 
-        if (result) {
-          const { nonce, hash } = result;
-          console.log("༼ つ ◕_◕ ༽つ" + hash, nonce);
+        if (!result) {continue;}
 
-          try {
-            const tx = await this.tx.sumbitBlock(
-              nonce,
-              [],
-              new TextEncoder().encode(process.env.NFT_URL),
-              process.env.CHAIN_OBJECT,
-              process.env.BALANCE_KEEPER
+        const { nonce, hash } = result;
+        console.log("༼ つ ◕_◕ ༽つ", hash, nonce.toString());
+
+        try {
+          const tx = await this.tx.sumbitBlock(
+            nonce,
+            [],
+            new TextEncoder().encode(process.env.NFT_URL),
+            process.env.CHAIN_OBJECT,
+            process.env.BALANCE_KEEPER
+          );
+          console.log("Block submitted:", tx);
+        } catch (err: any) {
+          if (err?.code === -32002) {
+            console.warn(
+              "Rejected by validators (object conflict). Wait for next snapshot."
             );
-            console.log(tx);
-          } catch (err) {
-            console.error(err);
+          } else {
+            console.error("Submit block failed:", err?.message || err);
           }
         }
-      } catch (err) {
-        console.error(err);
+      } catch (err: any) {
+        console.error("Snapshot error:", err?.message || err);
       }
-    });
+
+      await new Promise(r => setTimeout(r, 1500));
+    }
   }
 }
 
