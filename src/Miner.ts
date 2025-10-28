@@ -71,6 +71,7 @@ class Miner {
         iteration++;
 
         if (iteration % 100000n === 0n) {
+          
           const _snapshot = await this.chain.snapshot();
           if (!_snapshot) throw new Error("snapshot");
           const { header } = _snapshot.fields.last_block.fields;

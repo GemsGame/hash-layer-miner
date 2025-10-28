@@ -60,6 +60,11 @@ class Hash {
         process.env.CHAIN_OBJECT || "",
         process.env.BALANCE_KEEPER || ""
       );
+
+      //finalization
+
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       return tx;
     } catch (err: any) {
       if (err?.code === -32002) {
@@ -70,6 +75,7 @@ class Hash {
         console.error("Submit block failed:", err?.message || err);
       }
     }
+    
   }
 }
 
