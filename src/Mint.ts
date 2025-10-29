@@ -7,7 +7,7 @@ class Mint {
   tx: TXService;
 
   constructor() {
-    this.client = new SuiClient(process.env.RPC_PROVIDER);
+    this.client = new SuiClient(process.env.NETWORK);
 
     this.tx = new TXService(
       this.client,
