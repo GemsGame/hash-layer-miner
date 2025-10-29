@@ -1,4 +1,7 @@
-import { SuiClient as Client, SuiHTTPTransport } from "@mysten/sui/client";
+import {
+  SuiClient as Client,
+  getFullnodeUrl,
+} from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { Signer } from "@mysten/sui/cryptography";
 
@@ -9,9 +12,7 @@ export class SuiClient {
     if (!url) throw new Error("url is req");
 
     this.client = new Client({
-      transport: new SuiHTTPTransport({
-        url,
-      }),
+      url: url === "mainnet"? getFullnodeUrl("mainnet"): url,
     });
   }
 

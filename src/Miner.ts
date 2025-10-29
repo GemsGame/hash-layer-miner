@@ -70,7 +70,7 @@ class Miner {
         nonce++;
         iteration++;
 
-        if (iteration % 100000n === 0n) {
+        if (iteration % 50000n === 0n) {
           
           const _snapshot = await this.chain.snapshot();
           if (!_snapshot) throw new Error("snapshot");

@@ -22,7 +22,7 @@ class Hash {
     this.bsc = new BSC();
     this.builder = new NFTbuilder();
     this.store = new NFTstore();
-    this.client = new SuiClient(process.env.RPC_PROVIDER);
+    this.client = new SuiClient(process.env.NETWORK);
     this.adapter = new Adapter();
     this.chain = new Chain(this.client, this.adapter);
     this.miner = new Miner(this.bsc, this.chain);
@@ -60,10 +60,6 @@ class Hash {
         process.env.CHAIN_OBJECT || "",
         process.env.BALANCE_KEEPER || ""
       );
-
-      //finalization
-
-      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       return tx;
     } catch (err: any) {
